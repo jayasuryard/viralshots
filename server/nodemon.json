@@ -1,0 +1,28 @@
+{
+  "watch": [
+    "server.js",
+    "config/**/*.js",
+    "controllers/**/*.js",
+    "middleware/**/*.js",
+    "routes/**/*.js",
+    "services/**/*.js",
+    "utils/**/*.js",
+    "workers/**/*.js",
+    ".env"
+  ],
+  "ignore": [
+    "node_modules/**",
+    "temp/**",
+    "public/**",
+    "logs/**",
+    "prisma/**",
+    "*.test.js",
+    "*.spec.js"
+  ],
+  "ext": "js,json",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": 1000,
+  "verbose": true
+}
