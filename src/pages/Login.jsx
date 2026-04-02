@@ -119,6 +119,21 @@ export default function Login() {
             <Typography variant="body1" color="text.secondary">
               Sign in to ViralShots
             </Typography>
+            <Link
+              component={RouterLink}
+              to="/"
+              sx={{
+                textDecoration: 'none',
+                color: 'primary.main',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              ← Back to Home
+            </Link>
           </Stack>
           
           {error && (

@@ -133,6 +133,21 @@ export default function Signup() {
                 fontSize: '0.875rem',
               }}
             />
+            <Link
+              component={RouterLink}
+              to="/"
+              sx={{
+                textDecoration: 'none',
+                color: 'primary.main',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              ← Back to Home
+            </Link>
           </Stack>
           
           {error && (
