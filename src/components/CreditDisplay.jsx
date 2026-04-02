@@ -1,7 +1,7 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Box, Typography, Stack } from '@mui/material';
-import { Coins } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export default function CreditDisplay({ credits }) {
   const isLowCredits = credits < 3;
@@ -44,7 +44,7 @@ export default function CreditDisplay({ credits }) {
               background: !isLowCredits ? 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)' : undefined,
             }}
           >
-            <Coins size={16} color="white" />
+            <Sparkles size={16} color="white" />
           </Box>
           <Stack spacing={0}>
             <Typography variant="caption" fontWeight={500} color="text.secondary">

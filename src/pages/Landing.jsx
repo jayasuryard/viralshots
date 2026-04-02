@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import Lenis from 'lenis';
 import {
   Box,
   Container,
@@ -24,242 +28,258 @@ import {
   Link as LinkIcon,
   Video,
   Zap,
-  TrendingUp,
-  Users,
   Shield,
   CheckCircle2,
   Star,
   Mail,
-  Twitter,
-  Linkedin,
-  Github,
+  MessageCircle,
+  Share2,
+  Globe,
   Play,
-  Clock,
   Target,
   Award,
+  Code2,
+  Layers,
+  Wand2,
+  ChevronRight,
+  Monitor,
+  Smartphone,
+  BarChart3,
+  Rocket,
+  Flame,
+  Gamepad2,
+  Radio,
+  Crown,
 } from 'lucide-react';
-import dashboardImage from '../assets/dashboard.png';
+
+// Import landing components
+import {
+  ScrollProgress,
+  CustomCursor,
+  ParticlesBackground,
+  FloatingOrb,
+  HexGrid,
+  GsapReveal,
+  DashboardMockup,
+  DynamicUpdatesCarousel,
+  SectionHeader,
+  staggerContainer,
+  staggerItem,
+} from '../components/landing';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Landing() {
   const navigate = useNavigate();
   const [url, setUrl] = useState('');
+  const heroRef = useRef(null);
   const { scrollYProgress } = useScroll();
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+  const navBg = useTransform(scrollYProgress, [0, 0.02], ['rgba(9,9,11,0)', 'rgba(9,9,11,0.95)']);
+
+  // Initialize Lenis Smooth Scroll
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      smoothTouch: false,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, []);
+
+  // GSAP hero timeline
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      tl.fromTo('.hero-badge', { y: 40, opacity: 0, scale: 0.8 }, { y: 0, opacity: 1, scale: 1, duration: 0.8 })
+        .fromTo('.hero-title', { y: 100, opacity: 0, rotateX: 20 }, { y: 0, opacity: 1, rotateX: 0, duration: 1.2 }, '-=0.4')
+        .fromTo('.hero-sub', { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 }, '-=0.6')
+        .fromTo('.hero-input', { y: 50, opacity: 0, scale: 0.92 }, { y: 0, opacity: 1, scale: 1, duration: 1 }, '-=0.4')
+        .fromTo('.hero-trust', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, '-=0.3');
+    },
+    { scope: heroRef }
+  );
 
   const handleGetStarted = () => {
-    if (url) {
-      // Store URL in sessionStorage to pass to dashboard
-      sessionStorage.setItem('pendingUrl', url);
-      navigate('/dashboard');
-    } else {
-      navigate('/dashboard');
-    }
-  };
-
-  const handleSignIn = () => {
-    navigate('/login');
+    if (url) sessionStorage.setItem('pendingUrl', url);
+    navigate('/dashboard');
   };
 
   const features = [
     {
-      icon: Video,
-      title: 'AI-Powered Video Creation',
-      description: 'Transform any website into engaging viral videos in minutes using advanced AI',
-      color: '#6366f1',
+      icon: Wand2,
+      title: 'AI Video Engine',
+      description: 'Drop a URL. Get battle-ready content. AI reads, scripts, voices, and edits in 60 seconds.',
+      color: '#facc15',
+      gradient: 'linear-gradient(135deg, rgba(250,204,21,0.15), rgba(250,204,21,0.05))',
     },
     {
       icon: Zap,
-      title: 'Lightning Fast',
-      description: 'Generate professional videos in under 60 seconds with our optimized pipeline',
-      color: '#a855f7',
+      title: 'Ship in 60 Seconds',
+      description: 'From URL to viral ammunition. No timelines. No editing war rooms.',
+      color: '#3b82f6',
+      gradient: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.05))',
     },
     {
-      icon: TrendingUp,
-      title: 'Viral Optimization',
-      description: 'AI-driven viral score analysis ensures maximum engagement potential',
-      color: '#f97316',
-    },
-    {
-      icon: Users,
-      title: 'Multi-Platform Ready',
-      description: 'Perfect format for Instagram, TikTok, YouTube Shorts, and more',
+      icon: BarChart3,
+      title: 'Viral Score Intel',
+      description: 'Predictive engagement scoring. Know what dominates before deployment.',
       color: '#10b981',
+      gradient: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05))',
+    },
+    {
+      icon: Code2,
+      title: 'Built for Devs',
+      description: 'REST API, webhooks, programmatic gen. Full tactical control.',
+      color: '#ef4444',
+      gradient: 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05))',
+    },
+    {
+      icon: Layers,
+      title: 'Multi-Platform',
+      description: 'One-click export for TikTok, Reels, Shorts, Stories. All battlefields.',
+      color: '#a855f7',
+      gradient: 'linear-gradient(135deg, rgba(168,85,247,0.15), rgba(168,85,247,0.05))',
+    },
+    {
+      icon: Shield,
+      title: 'Enterprise Fortress',
+      description: 'SOC2 compliant. Military-grade encryption. Your data stays locked down.',
+      color: '#06b6d4',
+      gradient: 'linear-gradient(135deg, rgba(6,182,212,0.15), rgba(6,182,212,0.05))',
     },
   ];
 
   const plans = [
-    {
-      name: 'Starter',
-      price: '$29',
-      period: '/month',
-      description: 'Perfect for individuals and small projects',
-      features: [
-        '10 videos per month',
-        'HD quality exports',
-        'Basic analytics',
-        'Email support',
-        'Watermark removal',
-      ],
-      popular: false,
-      color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    },
-    {
-      name: 'Professional',
-      price: '$79',
-      period: '/month',
-      description: 'Ideal for content creators and marketers',
-      features: [
-        '50 videos per month',
-        '4K quality exports',
-        'Advanced analytics',
-        'Priority support',
-        'Custom branding',
-        'API access',
-        'Webhook notifications',
-      ],
-      popular: true,
-      color: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-    },
-    {
-      name: 'Enterprise',
-      price: '$299',
-      period: '/month',
-      description: 'For agencies and large teams',
-      features: [
-        'Unlimited videos',
-        '8K quality exports',
-        'Real-time analytics',
-        '24/7 dedicated support',
-        'White-label solution',
-        'Custom AI training',
-        'Advanced API features',
-        'Team management',
-      ],
-      popular: false,
-      color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    },
+    { name: 'Indie', price: '$29', period: '/mo', description: 'For solo builders shipping fast', features: ['10 videos/month', '1080p exports', 'API access', 'Email support', 'Basic analytics'], cta: 'Start Building', popular: false },
+    { name: 'Pro', price: '$79', period: '/mo', description: 'For creators & growing teams', features: ['50 videos/month', '4K exports', 'Priority API', 'Webhooks', 'Advanced analytics', 'Custom branding', 'Priority support'], cta: 'Go Pro', popular: true },
+    { name: 'Scale', price: '$299', period: '/mo', description: 'For agencies & products at scale', features: ['Unlimited videos', '8K exports', 'Dedicated API', 'White-label', 'Custom AI training', 'Team seats', '24/7 SLA', 'SSO & SAML'], cta: 'Talk to Sales', popular: false },
   ];
 
   const testimonials = [
-    {
-      name: 'Sarah Johnson',
-      role: 'Content Creator',
-      avatar: 'SJ',
-      content:
-        'ViralShots transformed my content strategy. I create 10x more engaging videos in half the time!',
-      rating: 5,
-    },
-    {
-      name: 'Michael Chen',
-      role: 'Marketing Director',
-      avatar: 'MC',
-      content:
-        'The AI-powered viral score is incredibly accurate. Our engagement rates increased by 300%.',
-      rating: 5,
-    },
-    {
-      name: 'Emily Rodriguez',
-      role: 'Social Media Manager',
-      avatar: 'ER',
-      content:
-        'Best investment for our agency. The quality and speed are unmatched in the industry.',
-      rating: 5,
-    },
-  ];
-
-  const stats = [
-    { value: '10M+', label: 'Videos Created' },
-    { value: '500K+', label: 'Happy Users' },
-    { value: '99.9%', label: 'Uptime' },
-    { value: '4.9/5', label: 'User Rating' },
+    { name: 'Alex Rivera', role: 'Indie Hacker @shipfast', avatar: 'AR', text: 'I killed my entire social media workflow and replaced it with ViralShots. 10x output, zero editing skills needed.', rating: 5 },
+    { name: 'Priya Sharma', role: 'Head of Growth, Launchpad', avatar: 'PS', text: 'Our content engagement went up 340% in 3 weeks. The viral score prediction is scarily accurate.', rating: 5 },
+    { name: 'Marcus Chen', role: 'YouTube Creator, 500K subs', avatar: 'MC', text: 'I repurpose every blog post into Shorts with one click. This is the missing tool every creator needs.', rating: 5 },
   ];
 
   return (
-    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ bgcolor: '#000', color: 'white', minHeight: '100vh', overflow: 'hidden', position: 'relative' }}>
+      <ScrollProgress />
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <CustomCursor />
+      </Box>
+
+      {/* Noise Texture */}
+      <Box
+        sx={{
+          position: 'fixed',
+          inset: 0,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          opacity: 0.03,
+          pointerEvents: 'none',
+          zIndex: 1,
+          mixBlendMode: 'overlay',
+        }}
+      />
+
       {/* Navigation */}
       <Box
-        component="nav"
+        component={motion.nav}
+        style={{ backgroundColor: navBg }}
         sx={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
           zIndex: 1000,
-          bgcolor: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid',
-          borderColor: 'rgba(0, 0, 0, 0.05)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          borderBottom: '1px solid rgba(250,204,21,0.1)',
+          boxShadow: '0 4px 30px rgba(0,0,0,0.3), 0 0 20px rgba(250,204,21,0.05)',
         }}
       >
-        <Container maxWidth="lg">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ py: 2 }}
-          >
-            <Stack direction="row" spacing={1.5} alignItems="center">
+        <Container maxWidth="xl">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 2.5 }}>
+            <Stack direction="row" spacing={2} alignItems="center">
               <Box
                 sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 2,
-                  background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+                  width: 42,
+                  height: 42,
+                  borderRadius: 2.5,
+                  background: 'linear-gradient(135deg, #facc15 0%, #f59e0b 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+                  boxShadow: '0 0 30px rgba(250,204,21,0.5), inset 0 1px 1px rgba(255,255,255,0.3)',
+                  border: '1px solid rgba(250,204,21,0.3)',
                 }}
               >
-                <Sparkles size={24} color="white" />
+                <Sparkles size={22} color="#000" strokeWidth={2.5} />
               </Box>
               <Typography
-                variant="h5"
-                fontWeight="bold"
                 sx={{
-                  background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)',
+                  fontSize: '1.35rem',
+                  fontWeight: 900,
+                  background: 'linear-gradient(135deg, #facc15 0%, #fff 50%, #facc15 100%)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
+                  letterSpacing: '-0.02em',
+                  textShadow: '0 0 20px rgba(250,204,21,0.3)',
                 }}
               >
                 ViralShots
               </Typography>
             </Stack>
 
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 500 }}
-              >
-                Features
+            <Stack direction="row" spacing={1} sx={{ display: { xs: 'none', md: 'flex' } }}>
+              {['Features', 'Pricing', 'About', 'Contact'].map((item) => (
+                <Button
+                  key={item}
+                  onClick={() => document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' })}
+                  sx={{
+                    color: 'rgba(255,255,255,0.7)',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    fontSize: '0.95rem',
+                    '&:hover': { color: '#facc15', bgcolor: 'rgba(250,204,21,0.08)' },
+                    borderRadius: 2,
+                    px: 2.5,
+                    py: 1,
+                  }}
+                >
+                  {item}
+                </Button>
+              ))}
+            </Stack>
+
+            <Stack direction="row" spacing={2}>
+              <Button onClick={() => navigate('/login')} sx={{ color: 'rgba(255,255,255,0.75)', textTransform: 'none', fontWeight: 600, display: { xs: 'none', sm: 'block' } }}>
+                Log in
               </Button>
               <Button
-                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 500 }}
-              >
-                Pricing
-              </Button>
-              <Button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 500 }}
-              >
-                Contact
-              </Button>
-              <Button
-                onClick={handleSignIn}
-                variant="outlined"
+                onClick={() => navigate('/signup')}
+                variant="contained"
+                endIcon={<Play size={16} />}
                 sx={{
+                  background: 'linear-gradient(135deg, #facc15 0%, #f59e0b 100%)',
+                  color: '#000',
                   textTransform: 'none',
-                  fontWeight: 600,
+                  fontWeight: 800,
                   borderRadius: 2,
-                  borderColor: 'primary.main',
-                  color: 'primary.main',
-                  px: 3,
+                  px: 4,
+                  py: 1.3,
+                  boxShadow: '0 0 25px rgba(250,204,21,0.5)',
+                  '&:hover': { boxShadow: '0 0 40px rgba(250,204,21,0.8)', transform: 'translateY(-2px)' },
                 }}
               >
-                Sign In
+                Enter Arena
               </Button>
             </Stack>
           </Stack>
@@ -268,1076 +288,400 @@ export default function Landing() {
 
       {/* Hero Section */}
       <Box
-        component={motion.div}
-        style={{ opacity, scale }}
+        ref={heroRef}
         sx={{
-          pt: { xs: 15, md: 20 },
-          pb: { xs: 8, md: 12 },
-          background: 'linear-gradient(180deg, #f8fafc 0%, rgba(243, 232, 255, 0.3) 50%, rgba(239, 246, 255, 0.3) 100%)',
           position: 'relative',
+          pt: { xs: 18, md: 24 },
+          pb: { xs: 12, md: 18 },
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
           overflow: 'hidden',
         }}
       >
-        {/* Animated background elements */}
-        <Box
-          component={motion.div}
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-          sx={{
-            position: 'absolute',
-            top: -100,
-            right: -100,
-            width: 400,
-            height: 400,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)',
-            filter: 'blur(60px)',
-          }}
-        />
-        <Box
-          component={motion.div}
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, -90, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-          sx={{
-            position: 'absolute',
-            bottom: -100,
-            left: -100,
-            width: 500,
-            height: 500,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%)',
-            filter: 'blur(60px)',
-          }}
-        />
+        <HexGrid />
+        <ParticlesBackground />
+        <FloatingOrb size={700} color="rgba(250,204,21,0.15)" top="-10%" left="-10%" delay={0} blur={120} />
+        <FloatingOrb size={600} color="rgba(59,130,246,0.12)" top="20%" left="65%" delay={2} blur={110} />
+        <FloatingOrb size={500} color="rgba(239,68,68,0.1)" top="60%" left="10%" delay={4} blur={100} />
 
-        <Container maxWidth="lg" sx={{ position: 'relative' }}>
-          <Stack spacing={6} alignItems="center" textAlign="center">
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Chip
-                icon={<Award size={16} />}
-                label="🎉 New: AI Voice Models + Advanced Editing"
-                sx={{
-                  bgcolor: 'rgba(99, 102, 241, 0.1)',
-                  color: 'primary.main',
-                  fontWeight: 600,
-                  px: 1,
-                  '& .MuiChip-icon': { color: 'primary.main' },
-                }}
-              />
-            </motion.div>
+        {/* Light Streaks */}
+        <Box component={motion.div} animate={{ x: ['-100%', '200%'] }} transition={{ duration: 8, repeat: Infinity, ease: 'linear' }} sx={{ position: 'absolute', top: '20%', left: 0, width: '200px', height: '2px', background: 'linear-gradient(90deg, transparent, rgba(250,204,21,0.8), transparent)', transform: 'rotate(-15deg)', filter: 'blur(1px)' }} />
 
-            {/* Main Heading */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <Typography
-                variant="h1"
-                sx={{
-                  fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem' },
-                  fontWeight: 800,
-                  lineHeight: 1.1,
-                  mb: 3,
-                  background: 'linear-gradient(135deg, #1e293b 0%, #4f46e5 50%, #9333ea 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                Turn Any Website Into
-                <br />
-                Viral Video Content
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+          <Stack spacing={7} alignItems="center" textAlign="center">
+            <Box className="hero-badge" sx={{ opacity: 0 }}>
+              <Chip icon={<Gamepad2 size={16} />} label="SEASON 2 • NOW LIVE • AI VOICE CLONING 2.0" sx={{ bgcolor: 'rgba(250,204,21,0.12)', color: '#fde047', fontWeight: 800, fontSize: '0.75rem', letterSpacing: 2, border: '1px solid rgba(250,204,21,0.3)', boxShadow: '0 0 20px rgba(250,204,21,0.2)', px: 2, py: 3 }} />
+            </Box>
+
+            <Box className="hero-title" sx={{ opacity: 0 }}>
+              <Typography component="h1" sx={{ fontSize: { xs: '3.5rem', md: '7.5rem' }, fontWeight: 900, lineHeight: 0.95, letterSpacing: '-0.04em', textTransform: 'uppercase' }}>
+                <Box component="span" sx={{ display: 'block', background: 'linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.85) 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  URL IN.
+                </Box>
+                <Box component="span" sx={{ display: 'block', background: 'linear-gradient(135deg, #facc15 0%, #fde047 30%, #3b82f6 60%, #ef4444 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 40px rgba(250,204,21,0.5))', my: 1 }}>
+                  VIRAL
+                </Box>
+                <Box component="span" sx={{ display: 'block', background: 'linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.85) 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  OUT.
+                </Box>
               </Typography>
-            </motion.div>
+            </Box>
 
-            {/* Subheading */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Typography
-                variant="h5"
-                color="text.secondary"
-                sx={{ maxWidth: 700, fontSize: { xs: '1.1rem', md: '1.3rem' }, fontWeight: 400 }}
-              >
-                AI-powered platform that transforms URLs into engaging videos in seconds.
-                Perfect for social media, marketing, and content creation.
+            <Box className="hero-sub" sx={{ opacity: 0 }}>
+              <Typography sx={{ fontSize: { xs: '1.15rem', md: '1.5rem' }, color: 'rgba(255,255,255,0.6)', maxWidth: 720, fontWeight: 500, lineHeight: 1.6 }}>
+                The AAA-grade AI platform that weaponizes <br />
+                any webpage into <strong style={{ color: '#facc15', fontWeight: 700 }}>60-second battle-tested</strong> viral content
               </Typography>
-            </motion.div>
+            </Box>
 
-            {/* Input Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              style={{ width: '100%', maxWidth: 600 }}
-            >
-              <Paper
-                elevation={8}
-                sx={{
-                  p: 1,
-                  borderRadius: 3,
-                  bgcolor: 'white',
-                  border: '2px solid',
-                  borderColor: 'primary.main',
-                  boxShadow: '0 10px 40px rgba(99, 102, 241, 0.2)',
-                }}
-              >
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+            <Box className="hero-input" sx={{ width: '100%', maxWidth: 720, opacity: 0 }}>
+              <Paper elevation={0} sx={{ p: 1.5, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.04)', border: '2px solid rgba(250,204,21,0.2)', backdropFilter: 'blur(16px)', boxShadow: '0 12px 40px rgba(0,0,0,0.4)' }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
                   <TextField
                     fullWidth
-                    placeholder="Enter website URL (e.g., https://example.com)"
+                    placeholder="Drop your URL... unleash the algorithm"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleGetStarted()}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <LinkIcon size={20} color="#6366f1" />
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 2, background: 'linear-gradient(135deg, rgba(250,204,21,0.2), rgba(250,204,21,0.05))', border: '1px solid rgba(250,204,21,0.3)' }}>
+                            <LinkIcon size={18} color="#facc15" />
+                          </Box>
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        '& fieldset': { border: 'none' },
-                      },
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2.5, color: 'white', fontSize: '1rem', fontWeight: 500, '& fieldset': { border: 'none' }, '& input::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } } }}
                   />
-                  <Button
-                    variant="contained"
-                    size="large"
-                    endIcon={<ArrowRight size={20} />}
-                    onClick={handleGetStarted}
-                    sx={{
-                      background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-                      color: 'white',
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      fontWeight: 700,
-                      fontSize: '1rem',
-                      whiteSpace: 'nowrap',
-                      boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)',
-                        boxShadow: '0 6px 16px rgba(99, 102, 241, 0.5)',
-                      },
-                    }}
-                  >
-                    Get Started Free
+                  <Button variant="contained" size="large" endIcon={<Zap size={20} />} onClick={handleGetStarted} sx={{ background: 'linear-gradient(135deg, #facc15 0%, #f59e0b 100%)', color: '#000', px: 6, py: 2.2, borderRadius: 2.5, textTransform: 'uppercase', fontWeight: 900, fontSize: '1rem', letterSpacing: 1, whiteSpace: 'nowrap', boxShadow: '0 0 30px rgba(250,204,21,0.6)', '&:hover': { boxShadow: '0 0 50px rgba(250,204,21,0.9)', transform: 'translateY(-2px) scale(1.02)' } }}>
+                    Deploy
                   </Button>
                 </Stack>
               </Paper>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                🎁 No credit card required • Start with 3 free videos
+              <Typography sx={{ mt: 2.5, color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem' }}>
+                <strong style={{ color: '#facc15' }}>Free Battle Pass</strong> • 3 Videos • No Credit Card
               </Typography>
-            </motion.div>
+            </Box>
 
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              style={{ width: '100%' }}
-            >
-              <Grid container spacing={4} sx={{ mt: 4 }}>
-                {stats.map((stat, index) => (
-                  <Grid item xs={6} md={3} key={index}>
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography
-                        variant="h3"
-                        fontWeight="bold"
-                        sx={{
-                          background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)',
-                          backgroundClip: 'text',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                        }}
-                      >
-                        {stat.value}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" fontWeight={500}>
-                        {stat.label}
-                      </Typography>
-                    </Stack>
-                  </Grid>
-                ))}
-              </Grid>
-            </motion.div>
-
-            {/* Dashboard Mockup */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.5 }}
-              style={{ width: '100%', maxWidth: 1000 }}
-            >
-              <Box
-                sx={{
-                  position: 'relative',
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
-                  border: '8px solid white',
-                  background: 'white',
-                  mt: 6,
-                }}
-              >
-                <Box
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
-                    paddingTop: '56.25%', // 16:9 aspect ratio
-                    bgcolor: '#f8fafc',
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={dashboardImage}
-                    alt="ViralShots Dashboard"
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                  {/* Play button overlay */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  >
-                    <IconButton
-                      sx={{
-                        width: 80,
-                        height: 80,
-                        bgcolor: 'rgba(255, 255, 255, 0.9)',
-                        backdropFilter: 'blur(10px)',
-                        '&:hover': {
-                          bgcolor: 'white',
-                          transform: 'scale(1.1)',
-                        },
-                        transition: 'all 0.3s ease',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
-                      }}
-                    >
-                      <Play size={36} fill="#6366f1" color="#6366f1" />
-                    </IconButton>
+            <Stack className="hero-trust" direction="row" spacing={6} flexWrap="wrap" justifyContent="center" sx={{ opacity: 0, mt: 4 }}>
+              {[
+                { icon: Radio, text: '2K+ IN THE ARENA', color: '#ef4444' },
+                { icon: Video, text: '500K+ BATTLES WON', color: '#facc15' },
+                { icon: Crown, text: '4.9★ LEGENDARY', color: '#3b82f6' },
+              ].map((item, i) => (
+                <Stack key={i} direction="row" spacing={1.5} alignItems="center">
+                  <Box sx={{ width: 36, height: 36, borderRadius: 2, background: `linear-gradient(135deg, ${item.color}20, ${item.color}05)`, border: `1px solid ${item.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px ${item.color}20` }}>
+                    <item.icon size={18} color={item.color} />
                   </Box>
-                </Box>
-              </Box>
-            </motion.div>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', fontWeight: 700, letterSpacing: 1 }}>{item.text}</Typography>
+                </Stack>
+              ))}
+            </Stack>
+
+            <DashboardMockup />
+            <DynamicUpdatesCarousel />
           </Stack>
         </Container>
       </Box>
 
       {/* Features Section */}
-      <Box
-        id="features"
-        sx={{
-          py: { xs: 8, md: 12 },
-          bgcolor: 'white',
-        }}
-      >
+      <Box id="features" sx={{ py: { xs: 12, md: 20 }, position: 'relative', overflow: 'hidden', '&::before': { content: '""', position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, #facc15, #3b82f6, transparent)', opacity: 0.5 } }}>
+        <FloatingOrb size={500} color="rgba(250,204,21,0.08)" top="30%" left="-10%" delay={1} blur={110} />
         <Container maxWidth="lg">
-          <Stack spacing={2} alignItems="center" textAlign="center" sx={{ mb: 8 }}>
-            <Chip
-              label="FEATURES"
-              size="small"
-              sx={{
-                bgcolor: 'rgba(99, 102, 241, 0.1)',
-                color: 'primary.main',
-                fontWeight: 700,
-                letterSpacing: 1,
-              }}
-            />
-            <Typography variant="h2" fontWeight="bold">
-              Everything You Need to Go Viral
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
-              Powerful features designed to help you create scroll-stopping content
-            </Typography>
-          </Stack>
+          <SectionHeader chip="ARSENAL" chipColor="#facc15" chipBorder="rgba(250,204,21,0.3)" title="EVERYTHING YOU NEED TO DOMINATE" subtitle="AAA-grade features engineered for maximum engagement and zero friction." />
 
-          <Grid container spacing={4}>
-            {features.map((feature, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card
-                    sx={{
-                      height: '100%',
-                      borderRadius: 3,
-                      border: '1px solid',
-                      borderColor: 'grey.100',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-8px)',
-                        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
-                        borderColor: feature.color,
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: 4 }}>
-                      <Box
-                        sx={{
-                          width: 56,
-                          height: 56,
-                          borderRadius: 2,
-                          background: `linear-gradient(135deg, ${feature.color}20 0%, ${feature.color}10 100%)`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          mb: 3,
-                        }}
-                      >
-                        <feature.icon size={28} color={feature.color} />
+          <Box component={motion.div} variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(6, 1fr)' }, gap: 4, gridAutoRows: 'minmax(220px, auto)' }}>
+            {/* Hero Feature */}
+            <motion.div variants={staggerItem} style={{ gridColumn: 'span 1', gridRow: 'span 1' }} className="md:col-span-6 md:row-span-2">
+              {(() => {
+                const f = features[0];
+                const IconComponent = f.icon;
+                return (
+                  <Box sx={{ height: '100%', minHeight: 400, borderRadius: 4, background: `linear-gradient(135deg, rgba(250,204,21,0.08) 0%, rgba(0,0,0,0.6) 100%)`, border: '2px solid rgba(250,204,21,0.2)', position: 'relative', overflow: 'hidden', cursor: 'pointer', clipPath: 'polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%)', '&:hover': { borderColor: 'rgba(250,204,21,0.6)', transform: 'translateY(-12px)', boxShadow: '0 40px 80px -40px rgba(250,204,21,0.4)' } }}>
+                    <Box sx={{ p: { xs: 5, md: 8 }, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <Box>
+                        <Box sx={{ width: 80, height: 80, borderRadius: 3, background: 'linear-gradient(135deg, rgba(250,204,21,0.3), rgba(250,204,21,0.1))', border: '2px solid rgba(250,204,21,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 5, boxShadow: '0 0 40px rgba(250,204,21,0.3)' }}>
+                          <IconComponent size={40} color="#facc15" strokeWidth={2.5} />
+                        </Box>
+                        <Typography sx={{ color: 'white', fontWeight: 900, fontSize: { xs: '2rem', md: '3rem' }, mb: 3, lineHeight: 1.1, textTransform: 'uppercase' }}>{f.title}</Typography>
+                        <Typography sx={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.8, fontSize: { xs: '1.1rem', md: '1.3rem' }, maxWidth: 600, fontWeight: 500 }}>{f.description}</Typography>
                       </Box>
-                      <Typography variant="h6" fontWeight="bold" gutterBottom>
-                        {feature.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                        {feature.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-            ))}
-          </Grid>
-
-          {/* Additional Features */}
-          <Box sx={{ mt: 8 }}>
-            <Grid container spacing={3}>
-              {[
-                { icon: Clock, text: 'Generate videos in under 60 seconds' },
-                { icon: Target, text: 'AI-powered viral score prediction' },
-                { icon: Shield, text: 'Enterprise-grade security & privacy' },
-                { icon: CheckCircle2, text: 'No watermarks on paid plans' },
-              ].map((item, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index}>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Box
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 1.5,
-                        bgcolor: 'rgba(99, 102, 241, 0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <item.icon size={20} color="#6366f1" />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 4 }}>
+                        <Typography sx={{ color: '#facc15', fontWeight: 700, fontSize: '1rem', letterSpacing: 1 }}>EXPLORE WEAPON</Typography>
+                        <Box component={motion.div} animate={{ x: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                          <ChevronRight size={24} color="#facc15" />
+                        </Box>
+                      </Box>
                     </Box>
-                    <Typography variant="body2" fontWeight={500}>
-                      {item.text}
-                    </Typography>
-                  </Stack>
-                </Grid>
-              ))}
-            </Grid>
+                  </Box>
+                );
+              })()}
+            </motion.div>
+
+            {/* Other Features */}
+            {features.slice(1).map((f, idx) => {
+              const IconComponent = f.icon;
+              const gridSpan = idx < 2 ? 3 : 2;
+              return (
+                <motion.div key={idx} variants={staggerItem} style={{ gridColumn: 'span 1' }} className={`md:col-span-${gridSpan}`}>
+                  <Box sx={{ height: '100%', minHeight: 280, borderRadius: 4, background: `linear-gradient(135deg, ${f.color}08 0%, rgba(0,0,0,0.4) 100%)`, border: `2px solid ${f.color}20`, position: 'relative', overflow: 'hidden', cursor: 'pointer', clipPath: 'polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%)', '&:hover': { borderColor: `${f.color}60`, transform: 'translateY(-8px)', boxShadow: `0 24px 48px -24px ${f.color}40` } }}>
+                    <Box sx={{ p: 5, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <Box sx={{ width: 64, height: 64, borderRadius: 2.5, background: `linear-gradient(135deg, ${f.color}25, ${f.color}10)`, border: `1.5px solid ${f.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4, boxShadow: `0 0 24px ${f.color}30` }}>
+                        <IconComponent size={32} color={f.color} strokeWidth={2} />
+                      </Box>
+                      <Typography sx={{ color: 'white', fontWeight: 800, fontSize: '1.4rem', mb: 2, lineHeight: 1.2, textTransform: 'uppercase' }}>{f.title}</Typography>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, fontSize: '0.95rem', flex: 1 }}>{f.description}</Typography>
+                    </Box>
+                  </Box>
+                </motion.div>
+              );
+            })}
           </Box>
         </Container>
       </Box>
 
-      {/* About Section */}
-      <Box
-        id="about"
-        sx={{
-          py: { xs: 8, md: 12 },
-          background: 'linear-gradient(180deg, #f8fafc 0%, white 100%)',
-        }}
-      >
+      {/* Platform Section */}
+      <Box sx={{ py: { xs: 16, md: 24 }, position: 'relative', background: 'linear-gradient(180deg, #000 0%, #0a0a0f 50%, #000 100%)' }}>
         <Container maxWidth="lg">
-          <Grid container spacing={6} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Stack spacing={3}>
-                <Chip
-                  label="ABOUT US"
-                  size="small"
-                  sx={{
-                    bgcolor: 'rgba(168, 85, 247, 0.1)',
-                    color: 'secondary.main',
-                    fontWeight: 700,
-                    letterSpacing: 1,
-                    width: 'fit-content',
-                  }}
-                />
-                <Typography variant="h2" fontWeight="bold">
-                  Empowering Creators Worldwide
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
-                  ViralShots was born from a simple idea: make professional video creation
-                  accessible to everyone. Our AI-powered platform has helped over 500,000
-                  creators, marketers, and businesses transform their content strategy.
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
-                  We believe that great content shouldn't require expensive equipment or technical
-                  expertise. With ViralShots, anyone can create scroll-stopping videos that drive
-                  real engagement and results.
-                </Typography>
-                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    size="large"
-                    onClick={handleGetStarted}
-                    sx={{
-                      background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-                      color: 'white',
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)',
-                      },
-                    }}
-                  >
-                    Start Creating
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    sx={{
-                      borderColor: 'primary.main',
-                      color: 'primary.main',
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      '&:hover': {
-                        borderColor: 'primary.dark',
-                        bgcolor: 'rgba(99, 102, 241, 0.05)',
-                      },
-                    }}
-                  >
-                    Watch Demo
-                  </Button>
-                </Stack>
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Box
-                sx={{
-                  position: 'relative',
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                }}
-              >
-                <Grid container spacing={2}>
-                  {[
-                    { value: '500K+', label: 'Active Users', color: '#6366f1' },
-                    { value: '10M+', label: 'Videos Created', color: '#a855f7' },
-                    { value: '150+', label: 'Countries', color: '#f97316' },
-                    { value: '99.9%', label: 'Satisfaction', color: '#10b981' },
-                  ].map((stat, index) => (
-                    <Grid item xs={6} key={index}>
-                      <Paper
-                        elevation={2}
-                        sx={{
-                          p: 4,
-                          borderRadius: 3,
-                          textAlign: 'center',
-                          background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}05 100%)`,
-                          border: '1px solid',
-                          borderColor: `${stat.color}30`,
-                        }}
-                      >
-                        <Typography
-                          variant="h3"
-                          fontWeight="bold"
-                          sx={{
-                            background: `linear-gradient(135deg, ${stat.color} 0%, ${stat.color}CC 100%)`,
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 1,
-                          }}
-                        >
-                          {stat.value}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" fontWeight={500}>
-                          {stat.label}
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            </Grid>
+          <GsapReveal>
+            <Box sx={{ textAlign: 'center', mb: 12 }}>
+              <Chip label="BATTLEFIELD" sx={{ bgcolor: 'rgba(59,130,246,0.12)', color: '#60a5fa', fontWeight: 800, fontSize: '0.7rem', letterSpacing: 2, border: '1px solid rgba(59,130,246,0.3)', px: 2, height: 32, mb: 4 }} />
+              <Typography variant="h2" sx={{ fontWeight: 900, fontSize: { xs: '2.5rem', md: '4.5rem' }, letterSpacing: '-0.03em', textTransform: 'uppercase', background: 'linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.1, mb: 4 }}>
+                Deploy Across
+                <br />
+                All Platforms
+              </Typography>
+            </Box>
+          </GsapReveal>
+
+          <Grid container spacing={4}>
+            {[
+              { name: 'TikTok', icon: Video, users: '1B+', color: '#fe2c55', engagement: '18%' },
+              { name: 'Instagram', icon: Smartphone, users: '2B+', color: '#e1306c', engagement: '12%' },
+              { name: 'YouTube', icon: Play, users: '2.5B+', color: '#ff0000', engagement: '8%' },
+              { name: 'Twitter/X', icon: MessageCircle, users: '500M+', color: '#1da1f2', engagement: '5%' },
+            ].map((platform, i) => (
+              <Grid item xs={12} sm={6} md={3} key={i}>
+                <GsapReveal delay={i * 0.1}>
+                  <motion.div whileHover={{ y: -12, scale: 1.03 }}>
+                    <Box sx={{ p: 5, borderRadius: 4, background: `linear-gradient(135deg, ${platform.color}08 0%, rgba(0,0,0,0.4) 100%)`, border: `2px solid ${platform.color}20`, cursor: 'pointer', '&:hover': { borderColor: `${platform.color}60`, boxShadow: `0 24px 48px -20px ${platform.color}40` } }}>
+                      <Box sx={{ width: 56, height: 56, borderRadius: 2.5, background: `linear-gradient(135deg, ${platform.color}25, ${platform.color}10)`, border: `1.5px solid ${platform.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, mx: 'auto' }}>
+                        <platform.icon size={28} color={platform.color} />
+                      </Box>
+                      <Typography sx={{ color: 'white', fontWeight: 800, fontSize: '1.2rem', mb: 1, textAlign: 'center' }}>{platform.name}</Typography>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', textAlign: 'center', mb: 2 }}>{platform.users} Active</Typography>
+                      <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${platform.color}20`, textAlign: 'center' }}>
+                        <Typography sx={{ color: platform.color, fontWeight: 700, fontSize: '0.9rem', letterSpacing: 1 }}>{platform.engagement} AVG ENGAGEMENT</Typography>
+                      </Box>
+                    </Box>
+                  </motion.div>
+                </GsapReveal>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* How It Works */}
+      <Box id="about" sx={{ py: { xs: 12, md: 20 }, position: 'relative' }}>
+        <Container maxWidth="lg">
+          <SectionHeader chip="TACTICAL BRIEFING" chipColor="#a855f7" chipBorder="rgba(168,85,247,0.3)" title="THREE MOVES. INFINITE IMPACT." />
+          <Grid container spacing={4} justifyContent="center">
+            {[
+              { step: '01', title: 'Paste your URL', description: 'Drop any webpage link. Our AI reads and understands the content instantly.', icon: LinkIcon, color: '#facc15' },
+              { step: '02', title: 'AI generates everything', description: 'Script, voiceover, visuals, and editing happen simultaneously in under 60 seconds.', icon: Wand2, color: '#a855f7' },
+              { step: '03', title: 'Publish & go viral', description: 'Download in any format. Get viral score prediction. One-click export everywhere.', icon: Rocket, color: '#3b82f6' },
+            ].map((step, i) => (
+              <Grid item xs={12} md={4} key={i}>
+                <Box sx={{ p: 5, borderRadius: 4, height: '100%', bgcolor: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)', textAlign: 'center', '&:hover': { borderColor: `${step.color}40`, transform: 'translateY(-6px)' } }}>
+                  <Typography sx={{ fontSize: '5rem', fontWeight: 900, color: `${step.color}12`, lineHeight: 1, mb: 3, fontFamily: 'monospace' }}>{step.step}</Typography>
+                  <Box sx={{ width: 56, height: 56, borderRadius: 3, background: `${step.color}12`, border: `1px solid ${step.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4, mx: 'auto' }}>
+                    <step.icon size={28} color={step.color} />
+                  </Box>
+                  <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '1.4rem', mb: 2 }}>{step.title}</Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.8 }}>{step.description}</Typography>
+                </Box>
+              </Grid>
+            ))}
           </Grid>
         </Container>
       </Box>
 
       {/* Testimonials */}
-      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'white' }}>
+      <Box sx={{ py: { xs: 12, md: 18 } }}>
         <Container maxWidth="lg">
-          <Stack spacing={2} alignItems="center" textAlign="center" sx={{ mb: 8 }}>
-            <Chip
-              label="TESTIMONIALS"
-              size="small"
-              sx={{
-                bgcolor: 'rgba(16, 185, 129, 0.1)',
-                color: 'success.main',
-                fontWeight: 700,
-                letterSpacing: 1,
-              }}
-            />
-            <Typography variant="h2" fontWeight="bold">
-              Loved by Creators Worldwide
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
-              See what our community has to say about ViralShots
-            </Typography>
-          </Stack>
-
+          <SectionHeader chip="WALL OF LOVE" chipColor="#facc15" chipBorder="rgba(250,204,21,0.25)" title="Loved by builders worldwide" />
           <Grid container spacing={4}>
-            {testimonials.map((testimonial, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card
-                    sx={{
-                      height: '100%',
-                      borderRadius: 3,
-                      border: '1px solid',
-                      borderColor: 'grey.100',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: 4 }}>
-                      <Stack spacing={3}>
-                        <Stack direction="row" spacing={0.5}>
-                          {[...Array(testimonial.rating)].map((_, i) => (
-                            <Star key={i} size={18} fill="#f59e0b" color="#f59e0b" />
-                          ))}
-                        </Stack>
-                        <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
-                          "{testimonial.content}"
-                        </Typography>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Avatar
-                            sx={{
-                              width: 48,
-                              height: 48,
-                              bgcolor: 'primary.main',
-                              fontWeight: 700,
-                            }}
-                          >
-                            {testimonial.avatar}
-                          </Avatar>
-                          <Box>
-                            <Typography variant="subtitle1" fontWeight={600}>
-                              {testimonial.name}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {testimonial.role}
-                            </Typography>
-                          </Box>
-                        </Stack>
+            {testimonials.map((t, i) => (
+              <Grid item xs={12} md={4} key={i}>
+                <Card sx={{ height: '100%', borderRadius: 4, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', '&:hover': { borderColor: 'rgba(250,204,21,0.25)', transform: 'translateY(-4px)' } }}>
+                  <CardContent sx={{ p: 5 }}>
+                    <Stack spacing={3.5}>
+                      <Stack direction="row" spacing={0.6}>
+                        {[...Array(t.rating)].map((_, j) => (
+                          <Star key={j} size={17} fill="#facc15" color="#facc15" />
+                        ))}
                       </Stack>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.9, fontStyle: 'italic' }}>&ldquo;{t.text}&rdquo;</Typography>
+                      <Stack direction="row" spacing={2.5} alignItems="center" sx={{ pt: 2 }}>
+                        <Avatar sx={{ width: 46, height: 46, bgcolor: 'rgba(99,102,241,0.2)', color: '#818cf8', fontWeight: 700 }}>{t.avatar}</Avatar>
+                        <Box>
+                          <Typography sx={{ color: 'white', fontWeight: 600 }}>{t.name}</Typography>
+                          <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' }}>{t.role}</Typography>
+                        </Box>
+                      </Stack>
+                    </Stack>
+                  </CardContent>
+                </Card>
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
 
-      {/* Pricing Section */}
-      <Box
-        id="pricing"
-        sx={{
-          py: { xs: 8, md: 12 },
-          background: 'linear-gradient(180deg, #f8fafc 0%, white 100%)',
-        }}
-      >
+      {/* Pricing */}
+      <Box id="pricing" sx={{ py: { xs: 12, md: 20 }, position: 'relative' }}>
         <Container maxWidth="lg">
-          <Stack spacing={2} alignItems="center" textAlign="center" sx={{ mb: 8 }}>
-            <Chip
-              label="PRICING"
-              size="small"
-              sx={{
-                bgcolor: 'rgba(249, 115, 22, 0.1)',
-                color: 'accent.main',
-                fontWeight: 700,
-                letterSpacing: 1,
-              }}
-            />
-            <Typography variant="h2" fontWeight="bold">
-              Choose Your Plan
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
-              Start free, upgrade as you grow. All plans include a 14-day money-back guarantee.
-            </Typography>
-          </Stack>
-
-          <Grid container spacing={4} alignItems="stretch">
-            {plans.map((plan, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  style={{ height: '100%' }}
-                >
-                  <Card
-                    sx={{
-                      height: '100%',
-                      borderRadius: 4,
-                      border: plan.popular ? '2px solid' : '1px solid',
-                      borderColor: plan.popular ? 'primary.main' : 'grey.100',
-                      position: 'relative',
-                      transition: 'all 0.3s ease',
-                      transform: plan.popular ? 'scale(1.05)' : 'scale(1)',
-                      '&:hover': {
-                        transform: plan.popular ? 'scale(1.08)' : 'scale(1.02)',
-                        boxShadow: plan.popular
-                          ? '0 20px 40px rgba(99, 102, 241, 0.3)'
-                          : '0 12px 24px rgba(0, 0, 0, 0.1)',
-                      },
-                    }}
-                  >
-                    {plan.popular && (
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: -12,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          bgcolor: 'primary.main',
-                          color: 'white',
-                          px: 3,
-                          py: 0.5,
-                          borderRadius: 2,
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          letterSpacing: 1,
-                          boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-                        }}
-                      >
-                        MOST POPULAR
-                      </Box>
-                    )}
-                    <CardContent sx={{ p: 4 }}>
-                      <Stack spacing={3}>
-                        <Box>
-                          <Typography variant="h5" fontWeight="bold" gutterBottom>
-                            {plan.name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {plan.description}
-                          </Typography>
-                        </Box>
-                        <Box>
-                          <Stack direction="row" alignItems="baseline" spacing={0.5}>
-                            <Typography
-                              variant="h2"
-                              fontWeight="bold"
-                              sx={{
-                                background: plan.color,
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                              }}
-                            >
-                              {plan.price}
-                            </Typography>
-                            <Typography variant="body1" color="text.secondary">
-                              {plan.period}
-                            </Typography>
-                          </Stack>
-                        </Box>
-                        <Button
-                          variant={plan.popular ? 'contained' : 'outlined'}
-                          size="large"
-                          fullWidth
-                          onClick={handleGetStarted}
-                          sx={{
-                            py: 1.5,
-                            borderRadius: 2,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            ...(plan.popular
-                              ? {
-                                  background: plan.color,
-                                  color: 'white',
-                                  boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-                                  '&:hover': {
-                                    boxShadow: '0 6px 16px rgba(99, 102, 241, 0.5)',
-                                  },
-                                }
-                              : {
-                                  borderColor: 'grey.300',
-                                  color: 'text.primary',
-                                  '&:hover': {
-                                    borderColor: 'primary.main',
-                                    bgcolor: 'rgba(99, 102, 241, 0.05)',
-                                  },
-                                }),
-                          }}
-                        >
-                          {plan.popular ? 'Get Started' : 'Choose Plan'}
-                        </Button>
-                        <Divider />
-                        <Stack spacing={2}>
-                          {plan.features.map((feature, i) => (
-                            <Stack direction="row" spacing={2} alignItems="flex-start" key={i}>
-                              <CheckCircle2 size={20} color="#10b981" style={{ flexShrink: 0 }} />
-                              <Typography variant="body2" color="text.secondary">
-                                {feature}
-                              </Typography>
-                            </Stack>
-                          ))}
+          <SectionHeader chip="PRICING" chipColor="#fb923c" chipBorder="rgba(249,115,22,0.25)" title="Simple, transparent pricing" subtitle="Start free. Upgrade when you're ready. No surprise fees, ever." />
+          <Grid container spacing={4}>
+            {plans.map((plan, i) => (
+              <Grid item xs={12} md={4} key={i}>
+                <Card sx={{ height: '100%', borderRadius: 4, bgcolor: plan.popular ? 'rgba(99,102,241,0.06)' : 'rgba(255,255,255,0.025)', border: '1px solid', borderColor: plan.popular ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.06)', position: 'relative', '&:hover': { borderColor: plan.popular ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.12)', transform: 'translateY(-6px)' } }}>
+                  {plan.popular && <Box sx={{ position: 'absolute', top: -1, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, #6366f1, #a855f7, #6366f1)', borderRadius: '4px 4px 0 0' }} />}
+                  <CardContent sx={{ p: 5 }}>
+                    <Stack spacing={3.5}>
+                      <Box>
+                        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1.5 }}>
+                          <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '1.4rem' }}>{plan.name}</Typography>
+                          {plan.popular && <Chip label="Popular" size="small" sx={{ bgcolor: 'rgba(99,102,241,0.15)', color: '#818cf8', fontWeight: 700, fontSize: '0.7rem', height: 24 }} />}
                         </Stack>
+                        <Typography sx={{ color: 'rgba(255,255,255,0.45)' }}>{plan.description}</Typography>
+                      </Box>
+                      <Stack direction="row" alignItems="baseline" spacing={0.6}>
+                        <Typography sx={{ color: 'white', fontWeight: 800, fontSize: '3.5rem', lineHeight: 1 }}>{plan.price}</Typography>
+                        <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 500, fontSize: '1.1rem' }}>{plan.period}</Typography>
                       </Stack>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                      <Button fullWidth variant={plan.popular ? 'contained' : 'outlined'} onClick={handleGetStarted} sx={{ py: 2, borderRadius: 2.5, textTransform: 'none', fontWeight: 700, ...(plan.popular ? { background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: 'white', boxShadow: '0 0 24px rgba(99,102,241,0.4)' } : { borderColor: 'rgba(255,255,255,0.15)', color: 'white' }) }}>
+                        {plan.cta}
+                      </Button>
+                      <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+                      <Stack spacing={2}>
+                        {plan.features.map((f, j) => (
+                          <Stack direction="row" spacing={2} alignItems="flex-start" key={j}>
+                            <CheckCircle2 size={18} color="#34d399" style={{ flexShrink: 0, marginTop: 2 }} />
+                            <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.95rem' }}>{f}</Typography>
+                          </Stack>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  </CardContent>
+                </Card>
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
 
-      {/* Contact Section */}
-      <Box
-        id="contact"
-        sx={{
-          py: { xs: 8, md: 12 },
-          bgcolor: 'white',
-        }}
-      >
-        <Container maxWidth="md">
-          <Stack spacing={2} alignItems="center" textAlign="center" sx={{ mb: 6 }}>
-            <Chip
-              label="CONTACT US"
-              size="small"
-              sx={{
-                bgcolor: 'rgba(99, 102, 241, 0.1)',
-                color: 'primary.main',
-                fontWeight: 700,
-                letterSpacing: 1,
-              }}
-            />
-            <Typography variant="h2" fontWeight="bold">
-              Get In Touch
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 500 }}>
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as
-              soon as possible.
-            </Typography>
-          </Stack>
-
-          <Paper
-            elevation={4}
-            sx={{
-              p: 4,
-              borderRadius: 4,
-              border: '1px solid',
-              borderColor: 'grey.100',
-            }}
-          >
-            <Stack spacing={3}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="First Name"
-                    placeholder="John"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Last Name"
-                    placeholder="Doe"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                      },
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <TextField
-                fullWidth
-                label="Email"
-                type="email"
-                placeholder="john@example.com"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Mail size={20} color="#6366f1" />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
-                  },
-                }}
-              />
-              <TextField
-                fullWidth
-                label="Message"
-                multiline
-                rows={5}
-                placeholder="Tell us how we can help you..."
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
-                  },
-                }}
-              />
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                endIcon={<ArrowRight size={20} />}
-                sx={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-                  color: 'white',
-                  py: 1.5,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)',
-                    boxShadow: '0 6px 16px rgba(99, 102, 241, 0.5)',
-                  },
-                }}
-              >
-                Send Message
-              </Button>
-            </Stack>
-          </Paper>
-
-          {/* Social Links */}
-          <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 6 }}>
-            {[
-              { icon: Twitter, color: '#1DA1F2' },
-              { icon: Linkedin, color: '#0A66C2' },
-              { icon: Github, color: '#181717' },
-              { icon: Mail, color: '#EA4335' },
-            ].map((social, index) => (
-              <IconButton
-                key={index}
-                sx={{
-                  bgcolor: `${social.color}15`,
-                  color: social.color,
-                  '&:hover': {
-                    bgcolor: social.color,
-                    color: 'white',
-                  },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <social.icon size={20} />
-              </IconButton>
-            ))}
-          </Stack>
+      {/* Final CTA */}
+      <Box id="contact" sx={{ py: { xs: 14, md: 20 }, position: 'relative', overflow: 'hidden' }}>
+        <FloatingOrb size={600} color="rgba(250,204,21,0.1)" top="-15%" left="50%" delay={0} blur={120} />
+        <Container maxWidth="lg">
+          <GsapReveal>
+            <Box sx={{ p: { xs: 6, md: 12 }, borderRadius: 5, textAlign: 'center', position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, rgba(250,204,21,0.08), rgba(59,130,246,0.06))`, border: '3px solid', borderImage: 'linear-gradient(135deg, rgba(250,204,21,0.4), rgba(59,130,246,0.3)) 1', clipPath: 'polygon(0 0, 100% 0, 100% 92%, 96% 100%, 0 100%)', boxShadow: `0 40px 100px -30px rgba(0,0,0,0.8), 0 0 80px rgba(250,204,21,0.15)` }}>
+              <Stack spacing={6} alignItems="center">
+                <Chip icon={<Flame size={18} />} label="LIMITED SLOTS • DEPLOY NOW" sx={{ bgcolor: 'rgba(239,68,68,0.15)', color: '#fca5a5', fontWeight: 900, fontSize: '0.8rem', letterSpacing: 2, border: '1px solid rgba(239,68,68,0.4)', py: 3, px: 3, boxShadow: '0 0 20px rgba(239,68,68,0.3)' }} />
+                <Typography variant="h1" sx={{ fontWeight: 900, fontSize: { xs: '2.8rem', md: '5rem' }, letterSpacing: '-0.03em', textTransform: 'uppercase', lineHeight: 1.05 }}>
+                  <Box component="span" sx={{ display: 'block', background: 'linear-gradient(135deg, #fde047 0%, #facc15 50%, #f59e0b 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 40px rgba(250,204,21,0.5))', mb: 2 }}>
+                    CLAIM YOUR
+                  </Box>
+                  <Box component="span" sx={{ display: 'block', background: 'linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    BATTLE PASS
+                  </Box>
+                </Typography>
+                <Typography sx={{ color: 'rgba(255,255,255,0.65)', maxWidth: 580, fontSize: { xs: '1.1rem', md: '1.25rem' }, lineHeight: 1.8, fontWeight: 500 }}>
+                  Join <strong style={{ color: '#facc15', fontWeight: 800 }}>2,000+ warriors</strong> dominating the content battlefield.
+                  <br />
+                  Deploy your first 3 videos <strong style={{ color: '#60a5fa' }}>FREE</strong>. No credit card.
+                </Typography>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ mt: 2 }}>
+                  <Button variant="contained" size="large" endIcon={<Zap size={22} />} onClick={handleGetStarted} sx={{ background: 'linear-gradient(135deg, #facc15 0%, #f59e0b 100%)', color: '#000', px: 8, py: 2.8, borderRadius: 3, textTransform: 'uppercase', fontWeight: 900, fontSize: '1.1rem', letterSpacing: 1.5, boxShadow: '0 0 40px rgba(250,204,21,0.6)', '&:hover': { boxShadow: '0 0 60px rgba(250,204,21,0.9)', transform: 'translateY(-4px) scale(1.03)' } }}>
+                    Enter Arena
+                  </Button>
+                  <Button variant="outlined" size="large" startIcon={<Target size={20} />} onClick={() => window.open('mailto:hello@viralshots.ai')} sx={{ px: 6, py: 2.8, borderRadius: 3, textTransform: 'uppercase', fontWeight: 700, fontSize: '1.1rem', letterSpacing: 1, borderWidth: 2, borderColor: 'rgba(250,204,21,0.3)', color: '#facc15', '&:hover': { borderColor: 'rgba(250,204,21,0.6)', bgcolor: 'rgba(250,204,21,0.1)' } }}>
+                    Talk Strategy
+                  </Button>
+                </Stack>
+                <Stack direction="row" spacing={4} divider={<Box sx={{ width: 1, height: 20, bgcolor: 'rgba(255,255,255,0.15)' }} />} sx={{ mt: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  {[
+                    { icon: Shield, text: 'SOC2 Secure' },
+                    { icon: Zap, text: '60s Deploy' },
+                    { icon: CheckCircle2, text: 'No CC Required' },
+                  ].map((item, i) => (
+                    <Stack key={i} direction="row" spacing={1.5} alignItems="center">
+                      <item.icon size={18} color="rgba(255,255,255,0.5)" />
+                      <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', fontWeight: 600 }}>{item.text}</Typography>
+                    </Stack>
+                  ))}
+                </Stack>
+              </Stack>
+            </Box>
+          </GsapReveal>
         </Container>
       </Box>
 
       {/* Footer */}
-      <Box
-        sx={{
-          py: 6,
-          bgcolor: '#0f172a',
-          color: 'white',
-        }}
-      >
+      <Box sx={{ py: 10, borderTop: '2px solid', borderImage: 'linear-gradient(90deg, transparent, rgba(250,204,21,0.3), transparent) 1', background: 'linear-gradient(180deg, rgba(0,0,0,0.4), #000)' }}>
         <Container maxWidth="lg">
-          <Grid container spacing={4}>
+          <Grid container spacing={5}>
             <Grid item xs={12} md={4}>
-              <Stack spacing={2}>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <Box
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 2,
-                      background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Sparkles size={20} color="white" />
+              <Stack spacing={3}>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Box sx={{ width: 36, height: 36, borderRadius: 2, background: 'linear-gradient(135deg, #6366f1, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Sparkles size={18} color="white" />
                   </Box>
-                  <Typography variant="h6" fontWeight="bold">
-                    ViralShots
-                  </Typography>
+                  <Typography sx={{ fontWeight: 800, fontSize: '1.2rem', color: 'white' }}>ViralShots</Typography>
                 </Stack>
-                <Typography variant="body2" color="grey.400" sx={{ maxWidth: 300 }}>
-                  Transform any website into viral video content with AI-powered automation.
-                </Typography>
+                <Typography sx={{ color: 'rgba(255,255,255,0.35)', maxWidth: 300, lineHeight: 1.7 }}>The AI-powered video engine for developers, creators, and teams who ship fast.</Typography>
+                <Stack direction="row" spacing={1.5} sx={{ mt: 2 }}>
+                  {[MessageCircle, Share2, Globe, Mail].map((Icon, i) => (
+                    <IconButton key={i} size="small" sx={{ color: 'rgba(255,255,255,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 2, '&:hover': { color: 'white', borderColor: 'rgba(255,255,255,0.25)' } }}>
+                      <Icon size={17} />
+                    </IconButton>
+                  ))}
+                </Stack>
               </Stack>
             </Grid>
             <Grid item xs={12} md={8}>
               <Grid container spacing={4}>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                    Product
-                  </Typography>
-                  <Stack spacing={1}>
-                    {['Features', 'Pricing', 'Demo', 'API'].map((item) => (
-                      <Typography
-                        key={item}
-                        variant="body2"
-                        color="grey.400"
-                        sx={{
-                          cursor: 'pointer',
-                          '&:hover': { color: 'white' },
-                        }}
-                      >
-                        {item}
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                    Company
-                  </Typography>
-                  <Stack spacing={1}>
-                    {['About', 'Blog', 'Careers', 'Press'].map((item) => (
-                      <Typography
-                        key={item}
-                        variant="body2"
-                        color="grey.400"
-                        sx={{
-                          cursor: 'pointer',
-                          '&:hover': { color: 'white' },
-                        }}
-                      >
-                        {item}
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                    Resources
-                  </Typography>
-                  <Stack spacing={1}>
-                    {['Documentation', 'Tutorials', 'Support', 'FAQ'].map((item) => (
-                      <Typography
-                        key={item}
-                        variant="body2"
-                        color="grey.400"
-                        sx={{
-                          cursor: 'pointer',
-                          '&:hover': { color: 'white' },
-                        }}
-                      >
-                        {item}
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                    Legal
-                  </Typography>
-                  <Stack spacing={1}>
-                    {['Privacy', 'Terms', 'Security', 'Cookies'].map((item) => (
-                      <Typography
-                        key={item}
-                        variant="body2"
-                        color="grey.400"
-                        sx={{
-                          cursor: 'pointer',
-                          '&:hover': { color: 'white' },
-                        }}
-                      >
-                        {item}
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Grid>
+                {[
+                  { title: 'Product', links: ['Features', 'Pricing', 'API Docs', 'Changelog'] },
+                  { title: 'Company', links: ['About', 'Blog', 'Careers', 'Press'] },
+                  { title: 'Resources', links: ['Documentation', 'Tutorials', 'Support', 'Status'] },
+                  { title: 'Legal', links: ['Privacy', 'Terms', 'Security', 'DPA'] },
+                ].map((col) => (
+                  <Grid item xs={6} sm={3} key={col.title}>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600, fontSize: '0.85rem', letterSpacing: 0.5, mb: 2.5 }}>{col.title}</Typography>
+                    <Stack spacing={1.5}>
+                      {col.links.map((link) => (
+                        <Typography key={link} sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.9rem', cursor: 'pointer', '&:hover': { color: 'white' } }}>
+                          {link}
+                        </Typography>
+                      ))}
+                    </Stack>
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
           </Grid>
-          <Divider sx={{ my: 4, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
-          >
-            <Typography variant="body2" color="grey.400">
-              © 2026 ViralShots. All rights reserved.
-            </Typography>
-            <Stack direction="row" spacing={1}>
-              {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item, index) => (
-                <Typography
-                  key={item}
-                  variant="caption"
-                  color="grey.400"
-                  sx={{
-                    cursor: 'pointer',
-                    '&:hover': { color: 'white' },
-                    '&:not(:last-child)::after': {
-                      content: '"•"',
-                      marginLeft: 8,
-                    },
-                  }}
-                >
-                  {item}
+          <Divider sx={{ my: 5, borderColor: 'rgba(255,255,255,0.06)' }} />
+          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" spacing={2.5}>
+            <Typography sx={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>&copy; 2026 ViralShots. All rights reserved.</Typography>
+            <Stack direction="row" spacing={4}>
+              {['Privacy Policy', 'Terms of Service', 'Cookies'].map((link) => (
+                <Typography key={link} sx={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', cursor: 'pointer', '&:hover': { color: 'rgba(255,255,255,0.6)' } }}>
+                  {link}
                 </Typography>
               ))}
             </Stack>
